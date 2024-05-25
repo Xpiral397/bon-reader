@@ -11,11 +11,12 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-
+from dotenv import load_dotenv
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+load_dotenv()
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -25,8 +26,12 @@ SECRET_KEY = 'django-insecure-%r)8%%!syk2h=b6ff9mf-6z+yk=+(zyi!-gxm!tus2zp57#r)r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost:8000']
 
+
+SITE_NAME = "Bon Reader"
+
+DOMAIN = 'localhost:3000'
 
 # Application definition
 
@@ -44,6 +49,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     
+    
 ]
 
 
@@ -51,21 +57,14 @@ INSTALLED_APPS = [
 
 DJOSER = {
       'LOGIN_FIELD': 'email',
-
      'USER_CREATE_PASSWORD_RETYPE': True,
-
     'USERNAME_CHANGED_EMAIL_CONFIRMATION': True,
-
     'PASSWORD_RESET_CONFIRM_URL': '/password/reset/confirm/{uid}/{token}',
-
     'USERNAME_RESET_CONFIRM_URL': '/username/reset/confirm/{uid}/{token}',
-
     'ACTIVATION_URL': '/verify/{uid}/{token}',
-   
-
     'SEND_ACTIVATION_EMAIL': True,
     "SOCIAL_AUTH_TOKEN_STRATEGY": "djoser.social.token.jwt.TokenStrategy",
-     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS" : ['http://localhost:3000'],
+    "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS" : ['http://localhost:3000'],
 
     
 
@@ -85,8 +84,15 @@ SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
 }
 
+
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'id, name, email, first_name, last_name, gender'
+}
+
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend'
 )
 
@@ -203,39 +209,39 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Facebook configuration
-SOCIALACCOUNT_PROVIDERS = {
-    # 'facebook': {
-    #     'METHOD': 'oauth2',
-    #     'SCOPE': ['email'],
-    #     'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
-    #     'FIELDS': [
-    #         'id',
-    #         'email',
-    #         'name',
-    #         'first_name',
-    #         'last_name',
-    #         'verified',
-    #         'locale',
-    #         'timezone',
-    #         'link',
-    #         'gender',
-    #         'updated_time',
-    #     ],
-    #     'EXCHANGE_TOKEN': True,
-    #     'LOCALE_FUNC': lambda request: 'en_US',
-    #     'VERIFIED_EMAIL': False,
-    #     'VERSION': 'v7.0',
-    # },
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        },
-    }
-}
+# SOCIALACCOUNT_PROVIDERS = {
+#     # 'facebook': {
+#     #     'METHOD': 'oauth2',
+#     #     'SCOPE': ['email'],
+#     #     'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+#     #     'FIELDS': [
+#     #         'id',
+#     #         'email',
+#     #         'name',
+#     #         'first_name',
+#     #         'last_name',
+#     #         'verified',
+#     #         'locale',
+#     #         'timezone',
+#     #         'link',
+#     #         'gender',
+#     #         'updated_time',
+#     #     ],
+#     #     'EXCHANGE_TOKEN': True,
+#     #     'LOCALE_FUNC': lambda request: 'en_US',
+#     #     'VERIFIED_EMAIL': False,
+#     #     'VERSION': 'v7.0',
+#     # },
+#     'google': {
+#         'SCOPE': [
+#             'profile',
+#             'email',
+#         ],
+#         'AUTH_PARAMS': {
+#             'access_type': 'online',
+#         },
+#     }
+# }
 
 # Redirect URLs
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -247,4 +253,16 @@ EMAIL_HOST_PASSWORD = "jehe guwf hcls iitc"  # Replace 'your_gmail_password' wit
 EMAIL_HOST_USER = 'xpiral397@gmail.com'
 EMAIL_DEFAULT_HOST = 'xpiral397@gmail.com'
 
- 
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+SOCIAL_AUTH_ALLOWED_REDIRECT_URIS = ['http://localhost:3000/']
+SOCAIL_AUTH_GOOGLE_OAUTH2_SCOPE = ['https://www.googleaps.com/auth/userinfo.email',"https://www.googleaps.com/auth/userinfo.profile"]
+SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name','last_name']
+
+
+print(os.getenv('SOCIAL_AUTH_FACEBOOK_KEY'))
+
+SOCIAL_AUTH_FACEBOOK_KEY = os.getenv('SOCIAL_AUTH_FACEBOOK_KEY')
+SOCIAL_AUTH_FACEBOOK_SECRET = os.getenv('SOCIAL_AUTH_FACEBOOK_SECRET')
