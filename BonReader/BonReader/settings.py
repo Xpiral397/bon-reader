@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     "djoser",
     "user",
+    'novel',
     "social_django",
     "rest_framework",
     "rest_framework_simplejwt",
