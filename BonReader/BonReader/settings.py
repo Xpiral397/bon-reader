@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-%r)8%%!syk2h=b6ff9mf-6z+yk=+(zyi!-gxm!tus2zp57#r)r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost:8000']
+ALLOWED_HOSTS = ['localhost:8000','127.0.0.1']
 
 
 SITE_NAME = "Bon Reader"
@@ -45,9 +45,10 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     "djoser",
     "user",
-    'novel',
+    "novel",
     "social_django",
     "rest_framework",
+    "rest_framework.authtoken",
     "rest_framework_simplejwt",
     
     
@@ -75,15 +76,9 @@ DJOSER = {
 AUTH_USER_MODEL = "user.User"
 
 
-REST_FRAMEWORK = {
-    "DEFAULT_PERMISSIONS_CLASSES": ['rest_framework.permissions.IsAuthenticated'],
-    "DEFAULT_AUTHENTICATION_CLASSES": ['rest_framework_simplejwt.authentication.JWTAuthentication']
-}
 
 
-SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('JWT',),
-}
+
 
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
@@ -99,18 +94,16 @@ AUTHENTICATION_BACKENDS = (
 
 # REST framework configuration
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
-    ],
+    ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
-SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES":""
-}
+
 
 MIDDLEWARE = [
     "social_django.middleware.SocialAuthExceptionMiddleware",
@@ -127,6 +120,7 @@ MIDDLEWARE = [
 from datetime import timedelta
 
 SIMPLE_JWT = {
+     'AUTH_HEADER_TYPES': ('JWT',),
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
@@ -253,6 +247,13 @@ EMAIL_PORT = 465
 EMAIL_HOST_PASSWORD = "jehe guwf hcls iitc"  # Replace 'your_gmail_password' with your actual Gmail password
 EMAIL_HOST_USER = 'xpiral397@gmail.com'
 EMAIL_DEFAULT_HOST = 'xpiral397@gmail.com'
+
+
+import os
+
+# Media files configuration
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 

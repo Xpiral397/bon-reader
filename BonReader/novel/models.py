@@ -15,15 +15,16 @@ class Novel(models.Model):
     title = models.CharField(max_length=50)
     synopsis = models.CharField(max_length=10000)
     author = models.CharField(max_length=50)
+    length = models.IntegerField(default=0)
     language = models.CharField(max_length=20)
-    lending_gender = models.CharField(max_length=30)
+    leading_gender = models.CharField(max_length=30)
     views = models.IntegerField(default=0)
     chapters = models.IntegerField(default=0)
     ratings = models.IntegerField(default=0)
     star = models.IntegerField(default=0)
     age_range = models.IntegerField(default=5)
     tags = models.CharField(max_length=1000)
-    image = models.ImageField(upload_to='catalog/books/coverimages/')
+    image = models.ImageField(upload_to='cover/')
     
     def add_new_chapter(self, title, text, capter):
         self.chapters_count+=1
@@ -51,8 +52,8 @@ class Chapter(models.Model):
 
 
 class Shelf(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     novels = models.ManyToManyField(Novel, through='ReadingActivity')
 
 class ReadingActivity(models.Model):

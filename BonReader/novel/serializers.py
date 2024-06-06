@@ -11,7 +11,18 @@ class NovelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Novel
-        fields = ['id', 'user', 'title', 'synopsis', 'author', 'language', 'lending_gender', 'views', 'ratings', 'star', 'age_range', 'tags', 'image', 'chapters_count', 'read', 'chapters']
+        fields = ['id', 'user', 'title', 'synopsis', 'author', 'language', 'leading_gender', 'views', 'ratings', 'star', 'age_range', 'tags', 'image', 'chapters_count', 'read' , 'genre']
+
+class NovelCreateSerializer(serializers.ModelSerializer):
+    # chapters = ChapterSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Novel
+        fields = [
+             'title', 'synopsis', 'author', 'language', 'leading_gender', 'views', 'ratings', 'genre', 'tags', 'image', 'length',
+             ]
+
+
 
 from rest_framework import serializers
 from .models import Novel, Chapter
@@ -27,7 +38,7 @@ class NovelRankingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Novel
         fields = [
-            'id', 'user', 'title', 'synopsis', 'author', 'language', 'lending_gender', 
+            'id', 'user', 'title', 'synopsis', 'author', 'language', 'leading_gender', 
             'views', 'ratings', 'star', 'age_range', 'tags', 'image', 'chapters_count', 
             'read', 'chapters'
         ]

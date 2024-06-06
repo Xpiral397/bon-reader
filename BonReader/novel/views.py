@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Novel, Chapter, Shelf, ReadingActivity
 from django.db.models import Q
-from .serializers import NovelSerializer, NovelRankingSerializer, ChapterSerializer, ReadingActivity, ReadingActivitySerializer, ShelfSerializer
+from .serializers import NovelCreateSerializer, NovelSerializer, NovelRankingSerializer, ChapterSerializer, ReadingActivity, ReadingActivitySerializer, ShelfSerializer
 from django.shortcuts import get_object_or_404
 
 @api_view(['GET'])
@@ -18,7 +18,7 @@ def novel_list(request):
 
 @api_view(['POST'])
 def add_novel(request):
-    serializer = NovelSerializer(data=request.data)
+    serializer = NovelCreateSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(user=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
