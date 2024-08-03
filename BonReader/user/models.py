@@ -24,6 +24,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     gender = models.CharField(max_length=7, choices=(('Male',"male"),('Female',"female")))
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=255)
+    activation_code = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     
