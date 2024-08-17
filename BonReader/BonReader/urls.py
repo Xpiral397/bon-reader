@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
@@ -25,7 +26,7 @@ from drf_yasg import openapi
 schema_view = get_schema_view(
     openapi.Info(
         title="Your API Title",
-        default_version='v1',
+        default_version="v1",
         description="Description of your API",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="contact@yourapi.local"),
@@ -35,16 +36,23 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("credential/",include('djoser.urls')),
-    path('', include("djoser.urls.authtoken")),
-    path('token/', include("djoser.urls.jwt")),
-    path('', include("djoser.social.urls")),
-    path('', include('novel.urls')),
-    path('user/', include('user.urls')),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),  # Optional, for Redoc UI 
+    path("admin/", admin.site.urls),
+    path("credential/", include("djoser.urls")),
+    path("", include("djoser.urls.authtoken")),
+    path("token/", include("djoser.urls.jwt")),
+    path("", include("djoser.social.urls")),
+    path("", include("novel.urls")),
+    path("user/", include("user.urls")),
+    path(
+        "swagger/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    path(
+        "redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+    ),  # Optional, for Redoc UI
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

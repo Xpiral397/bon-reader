@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Novel, Chapter
+from .models import Review
 
 
 class ChapterSerializer(serializers.ModelSerializer):
@@ -97,6 +98,12 @@ class ChapterSerializer(serializers.ModelSerializer):
             "date_modified",
             "date_created",
         ]
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = "__all__"
 
 
 class NovelRankingSerializer(serializers.ModelSerializer):

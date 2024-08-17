@@ -1,12 +1,13 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
-from django.db.models import Q
+from django.db.models import Q, Avg
+from rest_framework import viewsets
 from drf_yasg import openapi
-from .models import Novel, Chapter, Shelf, ReadingActivity
+from .models import Novel, Review, Shelf, ReadingActivity
 from .serializers import (
     NovelCreateSerializer,
     NovelSerializer,
@@ -15,7 +16,9 @@ from .serializers import (
     ChapterSerializer,
     ReadingActivitySerializer,
     ShelfSerializer,
+    ReviewSerializer,
 )
+
 
 # @swagger_auto_schema(
 #     method='get',
@@ -28,11 +31,12 @@ def novel_list(request):
     serializer = NovelSerializer(novels, many=True)
     return Response(serializer.data)
 
+
 @swagger_auto_schema(
-    method='post',
+    method="post",
     operation_description="Add a new novel",
     request_body=NovelCreateSerializer,
-    responses={201: NovelSerializer, 400: "Bad Request"}
+    responses={201: NovelSerializer, 400: "Bad Request"},
 )
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -43,13 +47,14 @@ def add_novel(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 # @swagger_auto_schema(
 #     method='post',
 #     operation_description="Edit a chapter within a novel",
 #     request_body=ChapterSerializer,
 #     responses={200: ChapterSerializer, 400: "Bad Request"}
 # )
-@api_view(['POST'])
+@api_view(["POST"])
 def edit_novel_chapter(request, novel_id, chapter_id):
     novel = get_object_or_404(Novel, id=novel_id)
     chapter = get_object_or_404(novel.chapters, id=chapter_id)
@@ -58,6 +63,7 @@ def edit_novel_chapter(request, novel_id, chapter_id):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 # @swagger_auto_schema(
 #     method='get',
@@ -70,6 +76,7 @@ def novel_detail(request, novel_id):
     serializer = NovelSerializer(novel)
     return Response(serializer.data)
 
+
 # @swagger_auto_schema(
 #     method='delete',
 #     operation_description="Delete a novel",
@@ -81,6 +88,7 @@ def delete_novel(request, novel_id):
     novel = get_object_or_404(Novel, id=novel_id, user=request.user)
     novel.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 # @swagger_auto_schema(
 #     method='post',
@@ -97,20 +105,22 @@ def add_chapter(request, novel_id):
     serializer = ChapterSerializer(novel.chapters, many=True)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
 # @swagger_auto_schema(
 #     method='delete',
 #     operation_description="Delete a chapter from a novel",
 #     responses={204: "No Content", 404: "Not Found"}
 # )
-@api_view(['DELETE'])
+@api_view(["DELETE"])
 def delete_chapter(request, novel_id, chapter_id):
     novel = get_object_or_404(Novel, id=novel_id)
     chapter = get_object_or_404(novel.chapters, id=chapter_id)
-    novel =  Novel.objects.get(id = novel_id)
-    novel.chapters_count -=1
+    novel = Novel.objects.get(id=novel_id)
+    novel.chapters_count -= 1
     novel.save()
     chapter.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 # @swagger_auto_schema(
 #     method='get',
@@ -124,7 +134,9 @@ def delete_chapter(request, novel_id, chapter_id):
 @permission_classes([IsAuthenticated])
 def get_ranking(request, ranking_type):
     if ranking_type not in ["power", "trending", "popular", "active"]:
-        return Response({"error": "Invalid ranking type"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Invalid ranking type"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     if ranking_type == "power":
         novels = Novel.objects.all().order_by("-ratings")
@@ -137,6 +149,7 @@ def get_ranking(request, ranking_type):
 
     serializer = NovelRankingSerializer(novels, many=True)
     return Response(serializer.data)
+
 
 # @swagger_auto_schema(
 #     method='get',
@@ -179,6 +192,7 @@ def genre_filter(request, genre=None, filter_by=None, sort_by=None):
     serializer = NovelSerializer(novels, many=True)
     return Response(serializer.data)
 
+
 # @swagger_auto_schema(
 #     method='post',
 #     operation_description="Add a novel to a user's shelf",
@@ -200,7 +214,9 @@ def add_novel_to_shelf(request):
     shelf_name = request.data.get("shelf_name", "Default Shelf")
 
     if not novel_id:
-        return Response({"error": "Novel ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Novel ID is required"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     try:
         novel = Novel.objects.get(id=novel_id)
@@ -210,6 +226,7 @@ def add_novel_to_shelf(request):
     shelf, created = Shelf.objects.get_or_create(user=user, name=shelf_name)
     ReadingActivity.objects.create(user=user, novel=novel, shelf=shelf)
     return Response({"message": "Novel added to shelf"}, status=status.HTTP_201_CREATED)
+
 
 # @swagger_auto_schema(
 #     method='get',
@@ -224,11 +241,12 @@ def get_shelf_novels(request):
     serializer = ShelfSerializer(shelves, many=True)
     return Response(serializer.data)
 
+
 # @swagger_auto_schema(
 #     method='get',
 #     operation_description="Get novels currently being read by the user",
 #     responses={200: ReadingActivitySerializer(many=True)}
-# )
+# )  7
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_reading_novels(request):
@@ -236,6 +254,7 @@ def get_reading_novels(request):
     reading_activities = ReadingActivity.objects.filter(user=user, completed=False)
     serializer = ReadingActivitySerializer(reading_activities, many=True)
     return Response(serializer.data)
+
 
 # @swagger_auto_schema(
 #     method='get',
@@ -249,3 +268,27 @@ def get_completed_novels(request):
     reading_activities = ReadingActivity.objects.filter(user=user, completed=True)
     serializer = ReadingActivitySerializer(reading_activities, many=True)
     return Response(serializer.data)
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+    def get_permissions(self):
+        if self.request.method in ["POST", "PUT", "PATCH", "DELETE"]:
+            return [IsAuthenticated()]
+        return [AllowAny()]
+
+    @action(detail=True, methods=["get"])
+    def average_rating(self, request, pk=None):
+        # Get the average rating for the specified novel
+        reviews = Review.objects.filter(novel_id=pk)
+        average_rating = reviews.aggregate(Avg("rating"))["rating__avg"]
+        return Response({"average_rating": average_rating})
+
+    @action(detail=True, methods=["get"])
+    def list_reviews(self, request, pk=None):
+        # List all reviews for the specified novel
+        reviews = Review.objects.filter(novel_id=pk)
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)

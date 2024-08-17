@@ -17,7 +17,7 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv()
+# load_dotenv()
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-%r)8%%!syk2h=b6ff9mf-6z+yk=+(zyi!-gxm!tus2zp57#r)r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost:8000", "127.0.0.1"]
+ALLOWED_HOSTS = ["*"]
 
 
 SITE_NAME = "Bon Reader"
@@ -49,8 +49,7 @@ INSTALLED_APPS = [
     "novel",
     "social_django",
     "rest_framework",
-    
-        'drf_yasg',
+    "drf_yasg",
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
 ]
@@ -66,14 +65,14 @@ DJOSER = {
     "SEND_ACTIVATION_EMAIL": True,
     "SOCIAL_AUTH_TOKEN_STRATEGY": "djoser.social.token.jwt.TokenStrategy",
     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": ["http://localhost:3000"],
-     'SERIALIZERS': {
-        'user_create': 'user.serializers.UserRegistrationSerializer',
-        'user': 'user.serializers.UserSerializer',
-        'password_reset_confirm': 'user.serializers.CustomPasswordResetConfirmSerializer',
+    "SERIALIZERS": {
+        "user_create": "user.serializers.UserRegistrationSerializer",
+        "user": "user.serializers.UserSerializer",
+        "password_reset_confirm": "user.serializers.CustomPasswordResetConfirmSerializer",
     },
-    'EMAIL': {
-        'password_reset': 'user.utilis.CustomPasswordResetEmail',
-        'activation': 'user.utilis.CustomActivationEmail',
+    "EMAIL": {
+        "password_reset": "user.utilis.CustomPasswordResetEmail",
+        "activation": "user.utilis.CustomActivationEmail",
     },
 }
 
@@ -93,16 +92,12 @@ AUTHENTICATION_BACKENDS = (
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
 
 SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': False,
-    'SECURITY_DEFINITIONS': {
-        'basic': {
-            'type': 'basic'
-        }
-    }
+    "USE_SESSION_AUTH": False,
+    "SECURITY_DEFINITIONS": {"basic": {"type": "basic"}},
 }
 
 # REST framework configuration
@@ -142,7 +137,7 @@ ROOT_URLCONF = "BonReader.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-         'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -205,6 +200,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = "staticfiles/"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -281,10 +278,6 @@ print(os.getenv("SOCIAL_AUTH_FACEBOOK_KEY"))
 
 SOCIAL_AUTH_FACEBOOK_KEY = os.getenv("SOCIAL_AUTH_FACEBOOK_KEY")
 SOCIAL_AUTH_FACEBOOK_SECRET = os.getenv("SOCIAL_AUTH_FACEBOOK_SECRET")
-
-
-
-
 
 
 # 5ddb40b810ecf7f065b3e8e4a779611aad0cb697

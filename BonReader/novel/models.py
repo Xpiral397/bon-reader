@@ -3,6 +3,7 @@ from django.conf import settings
 
 # Create your models here.
 
+
 class Chapter(models.Model):
     chapter = models.IntegerField(default=0)
     title = models.CharField(max_length=100)
@@ -10,16 +11,30 @@ class Chapter(models.Model):
     unsaved_text = models.TextField(null=True, max_length=1000000)
     date_modified = models.DateTimeField(auto_now=True)
     date_created = models.DateTimeField(auto_now_add=True)
-    
-    novel = models.ForeignKey('Novel', on_delete=models.CASCADE)
+
+    novel = models.ForeignKey("Novel", on_delete=models.CASCADE)
 
     class Meta:
         ordering = ["chapter"]
         unique_together = ("chapter", "novel")
 
+
+class Review(models.Model):
+    novel = models.ForeignKey("Novel", related_name="reviews", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    rating = models.PositiveIntegerField()  # Rating out of 5
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Review by {self.user.username} on {self.novel.title}"
+
+
 class UsersReder(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     chapter = models.IntegerField(default=0)
+
 
 class Novel(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -86,10 +101,12 @@ class Novel(models.Model):
         self.title = new_title
         self.save()
 
+
 class Shelf(models.Model):
     name = models.CharField(max_length=50)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     novels = models.ManyToManyField(Novel, through="ReadingActivity")
+
 
 class ReadingActivity(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
